@@ -122,6 +122,12 @@ int GgApp::main(int argc, const char* const* argv)
 
   //映り込み用のフレームバッファオブジェクト作成
   GLuint fb;
+  glGenFramebuffers(1, &fb);
+  glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cb, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb);
+
 
   // 隠面消去を有効にする
   glEnable(GL_DEPTH_TEST);
