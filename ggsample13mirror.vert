@@ -42,8 +42,8 @@ void main()
 
   // 陰影計算
   iamb = kamb * lamb;
-  idiff = max(dot(n, l), 0.0) * kdiff * ldiff;
-  ispec = pow(max(dot(n, h), 0.0), kshi) * kspec * lspec;
+  idiff = max(dot(-n, l), 0.0) * kdiff * ldiff;
+  ispec = pow(max(dot(-n, h), 0.0), kshi) * kspec * lspec;
 
   // 頂点のスクリーン座標
   gl_Position = mp * p;

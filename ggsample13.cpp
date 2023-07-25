@@ -50,6 +50,9 @@ const GgVector position{ 0.0f, 4.0f, 0.0f, 1.0f };
 // ワールド座標系の光源の目標位置
 const GgVector target{ 0.0f, 0.0f, 0.0f, 1.0f };
 
+//フレームバッファオブジェクトの解像度
+const GLsizei fboWidth(1024), fboHeight(1024);
+
 // オブジェクトの描画
 //   shader: オブジェクトの描画に用いる GgSimpleShader 型のシェーダ
 //   mv: オブジェクトを描画する際の GgMatrix 型のビュー変換行列
@@ -99,6 +102,26 @@ int GgApp::main(int argc, const char* const* argv)
 
   // 背景色を指定する
   glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
+
+  //カラーバッファ用のテクスチャを用意する
+  GLuint cb;
+  glGenTextures(1, &cb);
+  glBindTexture(GL_TEXTURE_2D, cb);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fboWidth, fboHeight, 0,
+    GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  //デプスバッファ用のレンダーバッファを用意する
+  GLuint rb;
+  glGenRenderbuffers(1, &rb);
+  glBindRenderbuffer(GL_RENDERBUFFER, rb);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, fboWidth, fboHeight);
+
+  //映り込み用のフレームバッファオブジェクト作成
+  GLuint fb;
 
   // 隠面消去を有効にする
   glEnable(GL_DEPTH_TEST);
