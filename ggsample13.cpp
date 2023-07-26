@@ -224,10 +224,6 @@ int GgApp::main(int argc, const char* const* argv)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, window.getWidth(), window.getHeight());
 
-    //正像をレンダリング
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    simple.use(light);
-    simple.
     /**
     // 正像用の光源の位置
     light.loadPosition(normal);
