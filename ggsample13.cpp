@@ -128,6 +128,30 @@ int GgApp::main(int argc, const char* const* argv)
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cb, 0);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb);
 
+  //デプスバッファ用のテクスチャを用意する
+  GLuint db;
+  glGenTextures(1, &db);
+  glBindTexture(GL_TEXTURE_2D, db);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, fboWidth, fboHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  // 書き込むポリゴンのテクスチャ座標値のＲとテクスチャとの比較を行うようにする
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+  // もしＲの値がテクスチャの値以下なら真（つまり日向）
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+
+  // シャドウマッピング用のフレームバッファオブジェクトを作成する
+  GLuint sb;
+  glGenFramebuffers(1, &sb);
+  glBindFramebuffer(GL_FRAMEBUFFER, sb);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, db, 0);
+  // カラーバッファは無いので描かない
+  glDrawBuffer(GL_NONE);
+ // カラーバッファは無いので読まない
+  glReadBuffer(GL_NONE);
 
   // 隠面消去を有効にする
   glEnable(GL_DEPTH_TEST);
@@ -191,6 +215,13 @@ int GgApp::main(int argc, const char* const* argv)
 
     mirror.use(light);
     light.loadPosition(reflect);
+
+    //前面にカリング
+    glCullFace(GL_FRONT);
+    drawObjects(mirror, mp * mr, object.get(), material, objects, t);
+    glCullFace(GL_BACK);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, window.getWidth(), window.getHeight());
     /**
     // 正像用の光源の位置
     light.loadPosition(normal);
