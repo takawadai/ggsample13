@@ -216,14 +216,20 @@ int GgApp::main(int argc, const char* const* argv)
     //鏡像をレンダリング
     mirror.use(mp, light);
     light.loadPosition(reflect);
-   
-    //前面にカリング
+
     glCullFace(GL_FRONT);
     drawObjects(mirror, mr, object.get(), material, objects, t);
     glCullFace(GL_BACK);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, window.getWidth(), window.getHeight());
 
+
+    //正像をレンダリング
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    simple.use(mp, light);
+    light.loadPosition(normal);
+
+    drawObjects(simple, mv, object.get(), material, objects, t);
 
     /**
     // 正像用の光源の位置
