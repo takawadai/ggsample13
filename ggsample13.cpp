@@ -159,6 +159,11 @@ int GgApp::main(int argc, const char* const* argv)
 
   // 視点座標系の光源位置を求める
   const auto normal{ mv * position };
+  mv.projection(lightProperty.position, normal);
+
+  const GgMatrix mr(mv * ggScale(1.0f, -1.0f, 1.0f));
+  GLfloat reflect[4];
+  mr.projection(reflect, normal);
 
   // 光源の材質
   const GgSimpleShader::LightBuffer light{ lightProperty };
@@ -176,8 +181,17 @@ int GgApp::main(int argc, const char* const* argv)
     const auto mp{ ggPerspective(0.5f, window.getAspect(), 1.0f, 15.0f) };
 
     // 画面消去
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //FBOにレンダリング開始
+    glViewport(0, 0, fboWidth, fboHeight);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    // 画面消去
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    mirror.use(light);
+    light.loadPosition(reflect);
+    /**
     // 正像用の光源の位置
     light.loadPosition(normal);
 
@@ -197,6 +211,7 @@ int GgApp::main(int argc, const char* const* argv)
 
     // カラーバッファを入れ替えてイベントを取り出す
     window.swapBuffers();
+    /**/
   }
 
   return 0;
