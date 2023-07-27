@@ -34,6 +34,10 @@ out vec4 idiff;                                       // 拡散反射光強度
 out vec4 ispec;                                       // 鏡面反射光強度
 out vec2 tc;                                          // カラーマップのテクスチャ座標
 
+//テクスチャ座標
+out vec2 ctex;
+out vec4 dtex;
+
 void main()
 {
   vec4 p = mv * pv;                                   // 視点座標系の頂点の位置
@@ -47,8 +51,11 @@ void main()
   idiff = max(dot(n, l), 0.0) * kdiff * ldiff;
   ispec = pow(max(dot(n, h), 0.0), kshi) * kspec * lspec;
 
+  ctex = pv.xy;
+  dtex = ms * pv;
+
   // 頂点のスクリーン座標
-  gl_Position = mp * p;
+  gl_Position = mp * pv;
   
   // カラーマップのテクスチャ座標
   tc = pv.xy;
