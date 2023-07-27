@@ -231,6 +231,13 @@ int GgApp::main(int argc, const char* const* argv)
 
     drawObjects(simple, mv, object.get(), material, objects, t);
 
+    //壁面はカラーテクスチャを参照し描画
+    floor.use(light);
+    floor.loadMatrix(mp, mv.rotateX(-1.5707963f));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, cb);
+    rectangle->draw();
+
     /**
     // 正像用の光源の位置
     light.loadPosition(normal);
