@@ -120,7 +120,7 @@ int GgApp::main(int argc, const char* const* argv)
   glBindRenderbuffer(GL_RENDERBUFFER, rb);
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, fboWidth, fboHeight);
 
-  //映り込み用のフレームバッファオブジェクト作成
+  //映り込み用のフレームバッファオブジェクト作成　ここを書いてから画面に何も映らなくなってしまった．
   GLuint fb;
   glGenFramebuffers(1, &fb);
   glBindFramebuffer(GL_FRAMEBUFFER, fb);
